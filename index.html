@@ -7,10 +7,10 @@
     <title>縦書きテキスト生成</title>
     <style>
         @font-face {
-            font-family: 'KP PusKul';
-            src: url('fonts/kppuskum.woff2') format('woff2'),
-                 url('fonts/kppuskum.woff') format('woff'),
-                 url('fonts/kppuskum.ttf') format('truetype');
+            font-family: 'KCC-KP-CheongPong-Medium-KP-2011KPS';
+            src: url('fonts/kpcheongpong2011.woff2') format('woff2'),
+                 url('fonts/kpcheongpong2011.woff') format('woff'),
+                 url('fonts/kpcheongpong2011.ttf') format('truetype');
         }
 
         @font-face {
@@ -77,25 +77,29 @@
     <h1>縦書きテキスト画像生成</h1>
     <textarea id="inputText" placeholder="テキストを入力してください..." rows="10" cols="50"></textarea><br>
 
+    <!-- フォント選択 -->
     <select id="fontSelect">
         <option value="Arial">Arial</option>
         <option value="Courier New">Courier New</option>
         <option value="Georgia">Georgia</option>
         <option value="Times New Roman">Times New Roman</option>
         <option value="Verdana">Verdana</option>
-        <option value="KP PusKul">北朝鮮フォント1</option>
+        <option value="KCC-KP-CheongPong-Medium-KP-2011KPS">北朝鮮フォント1</option>
         <option value="KP CheongPong B">北朝鮮フォント2</option>
     </select><br>
 
+    <!-- テキストの向き選択 -->
     <label for="textDirection">テキストの向き:</label>
     <select id="textDirection">
         <option value="horizontal">横書き</option>
         <option value="vertical">縦書き</option>
     </select><br>
 
+    <!-- 文字色選択 -->
     <label for="textColor">文字色:</label>
     <input type="color" id="textColor" value="#000000"><br>
 
+    <!-- 背景色選択 -->
     <label for="bgColor">背景色:</label>
     <input type="color" id="bgColor" value="#FFFFFF">
     <input type="checkbox" id="transparentCheck"> 透明<br>
@@ -105,7 +109,7 @@
     <img id="textImage" src="" alt="生成されたテキスト画像" />
 
     <script>
-        async function generateImage() {
+        function generateImage() {
             const inputText = document.getElementById('inputText').value;
             const font = document.getElementById('fontSelect').value;
             const textDirection = document.getElementById('textDirection').value;
@@ -129,7 +133,6 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             const fontSize = 40;
-            await document.fonts.load(`${fontSize}px '${font}'`);
             context.font = `${fontSize}px '${font}'`;
             context.fillStyle = textColor;
 
