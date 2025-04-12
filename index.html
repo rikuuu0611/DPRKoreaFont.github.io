@@ -1,131 +1,64 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>北朝鮮フォント描画</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>フォント表示テスト</title>
   <style>
     @font-face {
       font-family: 'KP PusKul';
-      src: url('fonts/kppuskum.woff2') format('woff2'),
-           url('fonts/kppuskum.woff') format('woff'),
-           url('fonts/kppuskum.ttf') format('truetype');
+      src: url('./fonts/KP_PusKul.woff2') format('woff2'),
+           url('./fonts/KP_PusKul.woff') format('woff');
     }
 
     @font-face {
       font-family: 'KP CheongPong B';
-      src: url('fonts/koreakum.woff2') format('woff2'),
-           url('fonts/koreakum.woff') format('woff'),
-           url('fonts/koreakum.ttf') format('truetype');
+      src: url('./fonts/KP_CheongPongB.woff2') format('woff2'),
+           url('./fonts/KP_CheongPongB.woff') format('woff');
     }
 
     body {
-      font-family: sans-serif;
+      text-align: center;
       padding: 20px;
+      font-family: sans-serif;
     }
 
     canvas {
       border: 1px solid #ccc;
-      display: block;
-      margin-top: 20px;
-    }
-
-    label {
-      display: inline-block;
-      width: 100px;
     }
   </style>
 </head>
 <body>
-
-  <h2>北朝鮮フォント描画</h2>
-
-  <div>
-    <label>文字入力:</label>
-    <input type="text" id="inputText" value="こんにちは、朝鮮フォント！"><br><br>
-
-    <label>フォント選択:</label>
-    <select id="fontSelect">
-      <option value="KP PusKul">北朝鮮フォント１</option>
-      <option value="KP CheongPong B">北朝鮮フォント２</option>
-    </select><br><br>
-
-    <label>文字色:</label>
-    <input type="color" id="textColor" value="#000000"><br><br>
-
-    <label>背景色:</label>
-    <input type="color" id="bgColor" value="#ffffff"><br><br>
-
-    <label>背景透明:</label>
-    <input type="checkbox" id="transparentCheck"><br><br>
-
-    <label>方向:</label>
-    <select id="textDirection">
-      <option value="horizontal">横書き</option>
-      <option value="vertical">縦書き</option>
-    </select><br><br>
-
-    <button onclick="generateImage()">画像生成</button>
-  </div>
-
-  <canvas id="textCanvas" width="1920" height="1500"></canvas>
+  <h1>フォント切り替えテスト</h1>
+  <label for="fontSelect">フォントを選んでください：</label>
+  <select id="fontSelect">
+    <option value="KP PusKul">北朝鮮フォント１</option>
+    <option value="KP CheongPong B">北朝鮮フォント２</option>
+  </select>
+  <br /><br />
+  <canvas id="myCanvas" width="400" height="200"></canvas>
 
   <script>
-    function drawHorizontalText(context, text, fontSize, canvasWidth, canvasHeight) {
-      const lines = text.split('\n');
-      let x = 50;
-      let y = 100;
-      for (let i = 0; i < lines.length; i++) {
-        context.fillText(lines[i], x, y);
-        y += fontSize + 20;
-      }
-    }
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    const select = document.getElementById('fontSelect');
 
-    function drawVerticalText(context, text, fontSize, canvasWidth, canvasHeight) {
-      let x = canvasWidth / 2;
-      let y = 100;
-      context.save();
-      context.translate(x, y);
-      context.rotate(Math.PI / 2); // rotate text to vertical
-      for (let i = 0; i < text.length; i++) {
-        context.fillText(text[i], 0, i * (fontSize + 10));
-      }
-      context.restore();
-    }
+    const draw = async () => {
+      const font = select.value;
+      const fontSize = 30;
 
-    function generateImage() {
-      const inputText = document.getElementById('inputText').value;
-      const font = document.getElementById('fontSelect').value;
-      const textDirection = document.getElementById('textDirection').value;
-      const textColor = document.getElementById('textColor').value;
-      const isTransparent = document.getElementById('transparentCheck').checked;
-      let bgColor = document.getElementById('bgColor').value;
+      // フォント読み込み完了を待つ（重要）
+      await document.fonts.load(`${fontSize}px "${font}"`);
 
-      const canvas = document.getElementById('textCanvas');
-      const context = canvas.getContext('2d');
-      const fontSize = 40;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = `${fontSize}px "${font}"`;
+      ctx.fillText(`フォント: ${font}`, 20, 100);
+    };
 
-      const canvasWidth = textDirection === 'vertical' ? 1080 : 1920;
-      const canvasHeight = textDirection === 'vertical' ? 2500 : 1500;
-      canvas.width = canvasWidth;
-      canvas.height = canvasHeight;
+    select.addEventListener('change', draw);
 
-      // 背景
-      context.fillStyle = isTransparent ? 'rgba(255, 255, 255, 0)' : bgColor;
-      context.fillRect(0, 0, canvas.width, canvas.height);
-
-      // フォントロードを待つ（クォーテーションで囲む）
-      document.fonts.load(`${fontSize}px '${font}'`).then(() => {
-        context.font = `${fontSize}px '${font}'`;
-        context.fillStyle = textColor;
-
-        if (textDirection === 'horizontal') {
-          drawHorizontalText(context, inputText, fontSize, canvasWidth, canvasHeight);
-        } else {
-          drawVerticalText(context, inputText, fontSize, canvasWidth, canvasHeight);
-        }
-      });
-    }
+    // 初回表示時も描画
+    window.addEventListener('load', draw);
   </script>
-
 </body>
 </html>
